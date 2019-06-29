@@ -33,6 +33,24 @@ rmdir(){
   fi
 }
 
+rmkdir(){
+  dir=$1
+  rmdir ${dir}
+  sh mkdir -p ${dir}
+}
+
+move(){
+  src=$1
+  dst=$2
+  sh mv ${src} ${dst}
+}
+
+copy(){
+  src=$1
+  dst=$2
+  sh cp -r ${src} ${dst}
+}
+
 if [ 0 -ne $# ]; then
   $*
   exit_assert $? "Failed($?): $*"
