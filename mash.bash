@@ -2,56 +2,63 @@
 
 exit_assert(){
   exit_status=$1
-  msg=$2
   if [ 0 -ne ${exit_status} ]; then
-    if [ -n "${msg}" ]; then
-      echo ${msg}
-    fi
+    echo "$2"
     exit ${exit_status}
   fi
 }
 
+execute(){
+  args=()
+  while [ 0 -lt $# ]
+  do
+    args+=("$1")
+    shift
+  done
+  "${args[@]}"
+}
+
 sh(){
-  command="$*"
-  echo "${PWD}$ ${command}"
-  ${command}
-  exit_assert $? "Failed($?): ${PWD}$ ${command}"
+  caption="[${PWD}] $@"
+  echo "${caption}"
+  execute $@
+  exit_assert $? "Failed($?): ${caption}"
 }
 
-chdir(){
-  dir=$1
-  if [ ! -d ${dir} ]; then
-    exit_assert 1 "Not found: ${dir}"
-  fi
-  cd ${dir}
+remove(){
+  sh rm -fr $@
 }
 
-rmdir(){
-  dir=$1
-  if [ -d ${dir} ]; then
-    sh rm -fr ${dir}
-  fi
-}
-
-rmkdir(){
-  dir=$1
-  rmdir ${dir}
-  sh mkdir -p ${dir}
-}
-
-move(){
-  src=$1
-  dst=$2
-  sh mv ${src} ${dst}
+rename(){
+  sh mv $@
 }
 
 copy(){
-  src=$1
-  dst=$2
-  sh cp -r ${src} ${dst}
+  sh cp -r $@
 }
 
-if [ 0 -ne $# ]; then
+changed(){
+  path=$1
+  if [ -d "${path}" ]; then
+    pushd ${path}
+  else
+    exit_assert 1 "Not found: ${path}"
+  fi
+}
+
+maked(){
+  path=$1
+  sh mkdir -p ${path}
+  changed ${path}
+}
+
+remaked(){
+  path=$1
+  remove ${path}
+  maked ${path}
+}
+
+if [[ ! "$-" =~ \i ]]; then
   $*
   exit_assert $? "Failed($?): $*"
 fi
