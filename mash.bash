@@ -21,20 +21,20 @@ execute(){
 sh(){
   caption="[${PWD}] $@"
   echo "${caption}"
-  execute $@
+  execute "$@"
   exit_assert $? "Failed($?): ${caption}"
 }
 
 remove(){
-  sh rm -fr $@
+  sh rm -fr "$@"
 }
 
 rename(){
-  sh mv $@
+  sh mv "$@"
 }
 
 copy(){
-  sh cp -r $@
+  sh cp -r "$@"
 }
 
 changed(){
@@ -59,6 +59,6 @@ remaked(){
 }
 
 if [[ ! "$-" =~ \i ]]; then
-  $*
-  exit_assert $? "Failed($?): $*"
+  "$@"
+  exit_assert $? "Failed($?): $@"
 fi
