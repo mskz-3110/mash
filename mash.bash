@@ -3,19 +3,14 @@
 exit_assert(){
   exit_status=$1
   if [ 0 -ne ${exit_status} ]; then
-    echo "$2"
+    shift
+    echo "$@"
     exit ${exit_status}
   fi
 }
 
 execute(){
-  args=()
-  while [ 0 -lt $# ]
-  do
-    args+=("$1")
-    shift
-  done
-  "${args[@]}"
+  "$@"
 }
 
 sh(){
@@ -60,5 +55,5 @@ remaked(){
 
 if [[ ! "$-" =~ \i ]]; then
   "$@"
-  exit_assert $? "Failed($?): $@"
+  exit_assert $? "Failed($?): [${PWD}] $@"
 fi
